@@ -1,0 +1,38 @@
+{
+  "class": [
+    "assault",
+    "support",
+    "bombardier",
+    "sniper"
+  ],
+  "name": [
+    [
+      "Leahs",
+      "Emily",
+      "Ophelia",
+      "Karu",
+      "Maiyo",
+      "Devi"
+    ],
+    [
+      "Jeanie",
+      "Florence",
+      "Madi"
+    ],
+    [
+      "Puris",
+      "Naiz",
+      "Kana",
+      "Lita",
+      "Yulia",
+      "Cubi"
+    ],
+    [
+      "Labi",
+      "Erial",
+      "Rachel",
+      "Lacis",
+      "Archi"
+    ]
+  ]
+}
