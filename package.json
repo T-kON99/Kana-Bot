@@ -1,0 +1,32 @@
+{
+  "//1": "describes your app and its dependencies",
+  "//2": "https://docs.npmjs.com/files/package.json",
+  "//3": "updating this file will download and update your packages",
+  "name": "Kana-Bot",
+  "version": "1.0.0",
+  "description": "A bot for MoE server on discord",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "cheerio": "^0.22.0",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2",
+    "cheerio-tableparser": "^1.0.1",
+    "discord.js": "^11.3.2"
+  },
+  "engines": {
+    "node": "8.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/kana-bot"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}
