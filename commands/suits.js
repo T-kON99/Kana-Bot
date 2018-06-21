@@ -35,7 +35,6 @@ module.exports = {
 		}
 		if(args.length == 1) {
 			let name, grade, classes, type;
-			message.channel.startTyping();
 			suitsPrefName.forEach((names, index) => {
 				for(const x in names) {
 					if(names[x].toLowerCase().includes(args[0].toLowerCase())) {

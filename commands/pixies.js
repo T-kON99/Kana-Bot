@@ -50,8 +50,6 @@ module.exports = {
 					}
 				});
 				if(name && args[0].length != 1) {
-					//	Indicate start of typing.
-					message.channel.startTyping();
 					//	Find class of pixies.
 					pixieEmbed.setTitle(name);
 					for(const x in pixieName) {

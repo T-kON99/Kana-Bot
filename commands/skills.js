@@ -58,8 +58,7 @@ module.exports = {
 				const urlPixie = urlMaster + `/${name}`;
 				skillsEmbed.setTitle(name)
 					.setURL(urlPixie);
-				//	Request to pixies page.
-				message.channel.startTyping();
+				//	Request to pixies page
 				rp(urlPixie)
 					.then(function(html) {
 						const $ = cheerio.load(html);
@@ -121,8 +120,7 @@ module.exports = {
 				//	Preferred suits.
 				if(name) {
 					if(args.length == 2) {
-						const url = urlMaster + `/${name}`;
-						message.channel.startTyping();
+						const url = urlMaster + `/${name}`;e
 						//	Request to the spesific suit url.
 						rp(url)
 							.then(function(html) {
@@ -241,8 +239,7 @@ module.exports = {
 					});
 					//	Non-preferred suits.
 					if(name && args[0].length != 1) {
-						const url = urlMaster + `/${name}`;
-						message.channel.startTyping();
+						const url = urlMaster + `/${name}`;e
 						rp(url)
 							.then(function(html) {
 								const $ = cheerio.load(html);
