@@ -120,7 +120,7 @@ module.exports = {
 				//	Preferred suits.
 				if(name) {
 					if(args.length == 2) {
-						const url = urlMaster + `/${name}`;e
+						const url = urlMaster + `/${name}`;
 						//	Request to the spesific suit url.
 						rp(url)
 							.then(function(html) {
@@ -239,7 +239,7 @@ module.exports = {
 					});
 					//	Non-preferred suits.
 					if(name && args[0].length != 1) {
-						const url = urlMaster + `/${name}`;e
+						const url = urlMaster + `/${name}`;
 						rp(url)
 							.then(function(html) {
 								const $ = cheerio.load(html);
