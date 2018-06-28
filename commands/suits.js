@@ -26,7 +26,8 @@ module.exports = {
 		const suitsNonPrefName = dataSuits.non_pref_name;
 
 		if(!args.length) {
-			return message.channel.send(`Master ${message.author}, that's an invalid command!`);
+			message.channel.send(`Master ${message.author}, that's not how you use the command!`);
+			return message.channel.send(`**Usage** : \`${config.prefix}suits [name]\` / \`${config.prefix}suits [class] [grade]\``);
 		}
 		else {
 			if(args.length > 1 && args[1].length > 2) {
