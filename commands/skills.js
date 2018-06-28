@@ -2,11 +2,10 @@ const Discord = require('discord.js');
 const rp = require('request-promise');
 const cheerio = require('cheerio'),
 	cheerioTableparser = require('cheerio-tableparser');
+const fs = require('fs');
 const config = require('../config.json');
-const dataPixie = require('../pixies.json');
-const dataSuit = require('../suits.json');
-const dataBasePixie = require('./pixies.js');
-const dataBaseSuit = require('./suits.js');
+const dataPixie = JSON.parse(fs.readFileSync('./pixies.json'));
+const dataSuit = JSON.parse(fs.readFileSync('./suits.json'));
 
 const urlMaster = 'https://masterofeternity.gamepedia.com';
 const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
@@ -88,7 +87,8 @@ module.exports = {
 								skillsEmbed.addField(`**${dataDesc[x]}**`, `${dummy} (Max ***${dataLevel[x]}***)`);
 							}
 						}
-						message.channel.send(skillsEmbed);
+						if(skillsEmbed.fields.length) return message.channel.send(skillsEmbed);
+						else return message.channel.send(`Master ${message.author}, please wait until the wiki is updated!`);
 					})
 					.catch(function(err) {
 						console.log(err);
