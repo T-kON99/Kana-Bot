@@ -64,7 +64,8 @@ module.exports = {
 						}
 						statEmbed.setURL(url)
 							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
-						message.channel.send(statEmbed);
+						if(statEmbed.fields.length) return message.channel.send(statEmbed);
+						else return message.channel.send(`Master ${message.author}, please wait until the wiki is updated!`);
 					})
 					.catch(function(err) {
 						console.log(err);
