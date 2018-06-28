@@ -70,7 +70,7 @@ module.exports = {
 							//	dataField is the main body on gamepedia.
 							const dataField = $('#mw-content-text');
 							const dataSummary = dataField.children().find('#How_to_Unlock').parent().next();
-							const dataBuild = dataField.children().find('#Pros_\\.26_Cons').parent().next().next();
+							const dataBuild = dataField.children().find('#Pros_\\.26_Cons').parent().prev().nextUntil('.wikitable').next();
 							//	Check How to Unlock existance
 							if(dataSummary.is('p') || dataSummary.is('ul')) {
 								//	Add Embed for How to Unlock
