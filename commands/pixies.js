@@ -12,18 +12,20 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 
 module.exports = {
 	name: 'pixies',
-	description: 'Display current available pixies in-game',
-	usage: `\`${config.prefix}pixies [name]\` / \`${config.prefix}pixies [class]\``,
-	example: `\`${config.prefix}pixies madi\` / \`${config.prefix}pixies support\``,
+	description: 'List current available pixies in-game',
+	usage: `${config.prefix}pixies [name] / ${config.prefix}pixies [class]`,
+	example: `${config.prefix}pixies madi / ${config.prefix}pixies support`,
 	cooldown: 3,
 	updateable: true,
-	execute(message, args) {
+	permLevel: 'everyone',
+	execute(client, message, args) {
 		const pixieEmbed = new Discord.RichEmbed()
 			.setColor('#f442bc');
 		//	Load necessary data
-		const dataPixie = JSON.parse(fs.readFileSync('./pixies.json'));
-		const pixieClass = dataPixie.class;
-		const pixieName = dataPixie.name;
+		const pixieClass = client.dataPixie.class;
+		const pixieName = client.dataPixie.name;
+		const emojiList = client.emojiList;
+		let emojiClass;
 		if(!args.length) {
 			//	Display pixies list.
 			for(const x in pixieClass) {
@@ -51,14 +53,15 @@ module.exports = {
 				});
 				if(name && args[0].length != 1) {
 					//	Find class of pixies.
-					pixieEmbed.setTitle(name);
 					for(const x in pixieName) {
 						if(pixieName[x].includes(name)) {
+							emojiClass = emojiList.find('name', pixieClass[x].toLowerCase());
 							pixieEmbed.setColor(EmbedColor[x])
 								.addField('**Class**', `\`${pixieClass[x].charAt(0).toUpperCase()}${pixieClass[x].slice(1)}\``);
 							break;
 						}
 					}
+					pixieEmbed.setTitle(`${emojiClass} ${name}`);
 					//	Get url
 					const urlPixie = urlMaster + `/${name}`;
 					pixieEmbed.setURL(urlPixie)
@@ -74,7 +77,7 @@ module.exports = {
 							//	Check How to Unlock existance
 							if(dataSummary.is('p') || dataSummary.is('ul')) {
 								//	Add Embed for How to Unlock
-								pixieEmbed.addField('**How to Unlock**', dataSummary.text().trim().split('\n ').sort().join('\n'));
+								pixieEmbed.addField('**How to Unlock**', emojiList.find('name', 'bullets').toString() + dataSummary.text().trim().split('\n ').sort().join(`\n${emojiList.find('name', 'bullets').toString()}`));
 							}
 							//	Check Skill Build existance
 							if(dataBuild.is('.wikitable')) {
@@ -93,6 +96,16 @@ module.exports = {
 									data.push(dataTemp.slice(1).join('/'));
 								}
 								pixieEmbed.addField('**Skill Builds**', data);
+							}
+							try {
+								const emojiPixies = message.client.guilds.get('423512363765989378').emojis;
+								let emojiID = emojiPixies.find(emoji => emoji.name == name.toLowerCase());
+								if(!emojiID) emojiID = emojiPixies.find(emoji => emoji.name.toLowerCase().includes(name.toLowerCase())).id;
+								else emojiID = emojiID.id;
+								pixieEmbed.setThumbnail(`https://cdn.discordapp.com/emojis/${emojiID}.png?v=1`);
+							}
+							catch(err) {
+								console.log('Thumbnail/Emoji not found');
 							}
 							message.channel.send(pixieEmbed);
 						})
