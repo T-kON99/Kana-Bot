@@ -1,9 +1,10 @@
 module.exports = {
 	name: 'ping',
-	description: 'Pong!',
+	description: 'Check my heartbeat!',
 	cooldown: 5,
 	updateable: false,
-	execute(message, args) {
-		message.channel.send('Pong!');
+	permLevel: 'everyone',
+	execute(client, message, args) {
+		message.channel.send(`:ping_pong:  Pong! **${client.ping}ms**`);
 	},
 };
