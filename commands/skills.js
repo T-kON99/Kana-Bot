@@ -4,8 +4,6 @@ const cheerio = require('cheerio'),
 	cheerioTableparser = require('cheerio-tableparser');
 const fs = require('fs');
 const config = require('../config.json');
-const dataPixie = JSON.parse(fs.readFileSync('./pixies.json'));
-const dataSuit = JSON.parse(fs.readFileSync('./suits.json'));
 
 const urlMaster = 'https://masterofeternity.gamepedia.com';
 const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
@@ -16,21 +14,24 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 
 module.exports = {
 	name: 'skills',
-	description: 'Display current available pixies and suits skills',
-	usage: `\`${config.prefix}skills [pixie]\` / \`${config.prefix}skills [suit Non-preferred]\` / \`${config.prefix}skills [suit Preferred] [grade]\``,
-	example: `\`${config.prefix}skills devi\` / \`${config.prefix}skills ajax\` / \`${config.prefix}skills magata us\``,
+	description: 'Get pixies and suits skills',
+	usage: `${config.prefix}skills [pixie] / ${config.prefix}skills [suit Non-preferred] / ${config.prefix}skills [suit Preferred] [grade]`,
+	example: `${config.prefix}skills devi / ${config.prefix}skills ajax / ${config.prefix}skills magata us`,
 	cooldown: 3,
 	updateable: false,
-	execute(message, args) {
+	permLevel: 'everyone',
+	execute(client, message, args) {
+		const emojiList = client.emojiList;
+		let emojiClass;
 		//	Embed message for this.
 		const skillsEmbed = new Discord.RichEmbed()
 			.setColor('#f442bc');
 		//	Load necessary data.
-		const pixieName = dataPixie.name;
-		const pixieClass = dataPixie.class;
-		const suitsPrefName = dataSuit.pref_name;
-		const suitsNonPrefName = dataSuit.non_pref_name;
-		const suitsClass = dataSuit.class;
+		const pixieName = client.dataPixie.name;
+		const pixieClass = client.dataPixie.class;
+		const suitsPrefName = client.dataSuit.pref_name;
+		const suitsNonPrefName = client.dataSuit.non_pref_name;
+		const suitsClass = client.dataSuit.class;
 		//	If there's no args.
 		if(!args.length) {
 			message.channel.send(`Master ${message.author}, you didn't ask which pixie or suit!`);
@@ -46,16 +47,18 @@ module.exports = {
 					}
 				}
 			});
+			//	Found the name
 			if(name && args[0].length != 1) {
 				for(const x in pixieName) {
 					if(pixieName[x].includes(name)) {
+						emojiClass = emojiList.find('name', pixieClass[x].toLowerCase());
 						skillsEmbed.setColor(EmbedColor[x])
 							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
 						break;
 					}
 				}
 				const urlPixie = urlMaster + `/${name}`;
-				skillsEmbed.setTitle(name)
+				skillsEmbed.setTitle(`${emojiClass} ${name}`)
 					.setURL(urlPixie);
 				//	Request to pixies page
 				rp(urlPixie)
