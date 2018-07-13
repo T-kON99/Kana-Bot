@@ -13,17 +13,17 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 module.exports = {
 	name: 'suits',
 	description: 'Display current available suits in-game',
-	usage: `\`${config.prefix}suits [name]\` / \`${config.prefix}suits [class] [grade]\``,
-	example: `\`${config.prefix}suits xiao_chui\` / \`${config.prefix}suits assault us\``,
+	usage: `${config.prefix}suits [name] / ${config.prefix}suits [class] [grade]`,
+	example: `${config.prefix}suits xiao_chui / ${config.prefix}suits assault us`,
 	cooldown: 3,
 	updateable: true,
-	execute(message, args) {
+	permLevel: 'everyone',
+	execute(client, message, args) {
 		const suitsEmbed = new Discord.RichEmbed()
 			.setColor('#f442bc');
-		const dataSuits = JSON.parse(fs.readFileSync('./suits.json'));
-		const suitsClass = dataSuits.class;
-		const suitsPrefName = dataSuits.pref_name;
-		const suitsNonPrefName = dataSuits.non_pref_name;
+		const suitsClass = client.dataSuit.class;
+		const suitsPrefName = client.dataSuit.pref_name;
+		const suitsNonPrefName = client.dataSuit.non_pref_name;
 
 		if(!args.length) {
 			message.channel.send(`Master ${message.author}, that's not how you use the command!`);
@@ -53,9 +53,15 @@ module.exports = {
 				rp(url)
 					.then(function(html) {
 						const $ = cheerio.load(html);
-						const imageURL = $('#mw-content-text').find('img')[4].attribs.src;
-						const user = $('#mw-content-text').find('a')[1].attribs.title;
-						suitsEmbed.setTitle(name.split('_').join(' '))
+						const icon = $('#mw-content-text').find('img')[1].attribs.src;
+						let imageURL = $('#mw-content-text').find('img')[4].attribs.src;
+						let user = $('#mw-content-text').find('a')[1].attribs.title;
+						//	Currently if it's undefined, it's Ophelia, Short workaround that's ugly for now.
+						if(!user) {
+							user = 'Ophelia';
+							imageURL = $('#mw-content-text').find('img')[2].attribs.src;
+						}
+						suitsEmbed.setAuthor(name.split('_').join(' '), icon, url)
 							.setThumbnail(imageURL)
 							.addField('**Type**', `\`${type}\` (${user})`)
 							.addField('**Class**', `\`${classes}\``)
@@ -92,8 +98,11 @@ module.exports = {
 					rp(url)
 						.then(function(html) {
 							const $ = cheerio.load(html);
-							const imageURL = $('#mw-content-text').find('img')[4].attribs.src;
-							suitsEmbed.setTitle(name.split('_').join(' '))
+							const image = $('#mw-content-text').find('img');
+							const icon = image[1].attribs.src;
+							//	Dynamic imageURL
+							const imageURL = $('#mw-content-text').find('img')[image.length - 4].attribs.src;
+							suitsEmbed.setAuthor(name.split('_').join(' '), icon, url)
 								.setThumbnail(imageURL)
 								.addField('**Type**', `\`${type}\``)
 								.addField('**Class**', `\`${classes}\``)
