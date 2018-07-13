@@ -5,17 +5,19 @@ module.exports = {
 	description: 'List all commands available',
 	cooldown: 3,
 	updatable: false,
+	permLevel: 'everyone',
 	usage: `\`${config.prefix}help\` / \`${config.prefix}help [command]\``,
-	execute(message, args) {
+	execute(client, message, args) {
 		const { commands } = message.client;
 		const data = [];
 		const helpEmbed = new Discord.RichEmbed()
 			.setAuthor(`${message.client.user.username} Bot`, message.client.user.avatarURL)
 			.setColor('#f442bc');
 		if(!args.length) {
+			const space = ' ';
 			message.author.send('Here are the list of my available commands, Master!');
-			data.push(`\`${commands.map(command => config.prefix + command.name).join('\n')}\``);
-			data.push(`\nSend \`${config.prefix}help [command name]\` to know more about the command!`);
+			data.push(`\`\`\`asciidoc\n${commands.map(command => config.prefix + command.name + space.repeat(11 - command.name.length) + `:: ${command.description}`).join('\n')}\n\`\`\``);
+			data.push(`Send \`${config.prefix}help [command name]\` to know more about the command!`);
 			helpEmbed.addField('Commands', data);
 		}
 		else {
@@ -24,14 +26,23 @@ module.exports = {
 			}
 			else {
 				const command = commands.get(args[0]);
+				const space = ' ';
 				message.author.send(`Details of \`${config.prefix}${command.name}\``);
-				if(command.description) data.push(`**Description:**	  ${command.description}`);
-				if(command.usage) data.push(`**Usage:**				${command.usage}`);
-				if(command.example) data.push(`**Example:**		    ${command.example}`);
-				if(command.cooldown) data.push(`**Cooldown:**		  ${command.cooldown} second(s)`);
+				data.push('```asciidoc\n');
+				for(const prop in command) {
+					if(prop == 'name' || typeof command[prop] != 'string') continue;
+					else {
+						if(command[prop]) data.push(prop.charAt(0).toUpperCase() + prop.slice(1).toLowerCase() + space.repeat(15 - prop.length) + ':: ' + command[prop] + '\n');
+					}
+				}
+				data.push('\n```');
 				helpEmbed.addField(`\`${config.prefix}${command.name}\``, data);
 			}
 		}
+		client.generateInvite()
+			.then(link => {
+				helpEmbed.addField('**Want me in your server?**', `[Add me Master!](${link})`);
+			});
 		if(message.channel.type != 'dm') message.channel.send(`Master ${message.author}, I personally have a DM for you!`);
 		message.author.send(helpEmbed);
 	},
