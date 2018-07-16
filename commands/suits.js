@@ -56,9 +56,9 @@ module.exports = {
 						const icon = $('#mw-content-text').find('img')[1].attribs.src;
 						let imageURL = $('#mw-content-text').find('img')[4].attribs.src;
 						let user = $('#mw-content-text').find('a')[1].attribs.title;
-						//	Currently if it's undefined, it's Ophelia, Short workaround that's ugly for now.
+						//	Temporary fix before new template
 						if(!user) {
-							user = 'Ophelia';
+							user = $('#mw-content-text').find('a')[0].attribs.title || $('#Obtained_By').parent().next().find('a')[0].attribs.title;
 							imageURL = $('#mw-content-text').find('img')[2].attribs.src;
 						}
 						suitsEmbed.setAuthor(name.split('_').join(' '), icon, url)
