@@ -8,8 +8,8 @@ module.exports = class Kana extends Discord.Client {
 	constructor(option) {
 		super(option);
 		this.defaultSettings = config;
-		this.dataPixie = JSON.parse(fs.readFileSync('./pixies.json'));
-		this.dataSuit = JSON.parse(fs.readFileSync('./suits.json'));
+		this.dataPixie = require('../pixies.json');
+		this.dataSuit = require('../suits.json');
 	}
 	loadCommands() {
 		return require('../modules/commands.js')(this);
@@ -23,6 +23,8 @@ module.exports = class Kana extends Discord.Client {
 		setInterval(() => {
 			dataBasePixie.update();
 			dataBaseSuit.update();
+			this.dataPixie = JSON.parse(fs.readFileSync('./pixies.json'));
+			this.dataSuit = JSON.parse(fs.readFileSync('./suits.json'));
 		}, 900 * 1000);
 	}
 };
