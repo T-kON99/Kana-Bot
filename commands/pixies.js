@@ -45,7 +45,7 @@ module.exports = {
 				let name;
 				pixieName.forEach(names => {
 					for(const x in names) {
-						if(names[x].toLowerCase().includes(args[0].toLowerCase())) {
+						if(names[x].toLowerCase().includes(args[0].toLowerCase()) || args[0].toLowerCase().includes(names[x].toLowerCase())) {
 							name = names[x];
 							return true;
 						}
@@ -105,7 +105,7 @@ module.exports = {
 								pixieEmbed.setThumbnail(`https://cdn.discordapp.com/emojis/${emojiID}.png?v=1`);
 							}
 							catch(err) {
-								console.log('Thumbnail/Emoji not found');
+								console.log('Thumbnail/Emoji/Guild not found');
 							}
 							message.channel.send(pixieEmbed);
 						})

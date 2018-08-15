@@ -41,7 +41,7 @@ module.exports = {
 			let name;
 			pixieName.forEach(names => {
 				for(const x in names) {
-					if(names[x].toLowerCase().includes(args[0].toLowerCase())) {
+					if(names[x].toLowerCase().includes(args[0].toLowerCase()) || args[0].toLowerCase().includes(names[x].toLowerCase())) {
 						name = names[x];
 						return true;
 					}
@@ -109,7 +109,7 @@ module.exports = {
 				//	Search for details of preferred suits.
 				suitsPrefName.forEach((names, index) => {
 					for(const x in names) {
-						if(names[x].toLowerCase().includes(args[0].toLowerCase())) {
+						if(names[x].toLowerCase().includes(args[0].toLowerCase()) || args[0].toLowerCase().includes(names[x].toLowerCase())) {
 							classes = suitsClass[index];
 							skillsEmbed.setColor(EmbedColor[index]);
 							skillsEmbed_2.setColor(EmbedColor[index]);

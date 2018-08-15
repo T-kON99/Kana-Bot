@@ -38,7 +38,7 @@ module.exports = {
 			let name, grade, classes, type;
 			suitsPrefName.forEach((names, index) => {
 				for(const x in names) {
-					if(names[x].toLowerCase().includes(args[0].toLowerCase())) {
+					if(names[x].toLowerCase().includes(args[0].toLowerCase()) || args[0].toLowerCase().includes(names[x].toLowerCase())) {
 						classes = suitsClass[index];
 						suitsEmbed.setColor(EmbedColor[index]);
 						type = 'Preferred Suits';
