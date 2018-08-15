@@ -33,7 +33,7 @@ module.exports = {
 			let name, grade, classes, type;
 			pixieName.forEach((names, index) => {
 				for(const x in names) {
-					if(names[x].toLowerCase().includes(args[0].toLowerCase())) {
+					if(names[x].toLowerCase().includes(args[0].toLowerCase()) || args[0].toLowerCase().includes(names[x].toLowerCase())) {
 						name = names[x];
 						emojiClass = emojiList.find('name', pixieClass[index].toLowerCase());
 						statEmbed.setColor(EmbedColor[index]);
@@ -77,15 +77,17 @@ module.exports = {
 							data.push(`${emojiList.find('name', statDesc.toLowerCase())}${statDesc} : ***${statMax}%*** (+${(statTable[x][2] - statTable[x][1]).toFixed(1)}% /Genic)`);
 							statEmbed.setTitle(emojiClass.toString() + ' ' + name + ` Lvl 48 (Genic Rank ${genicRank})`);
 						}
-						statEmbed.setURL(url)
-							.addField('**Stats**', data)
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
+						if(data.length) {
+							statEmbed.setURL(url)
+								.addField('**Stats**', data)
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
+						}
 						//	If user wants to compare stats
 						if(args.length > 1) {
 							let name_2, grade_2, classes_2, type_2, emojiClass_2;
 							pixieName.forEach((names, index) => {
 								for(const x in names) {
-									if(names[x].toLowerCase().includes(args[1].toLowerCase())) {
+									if(names[x].toLowerCase().includes(args[1].toLowerCase()) || args[1].toLowerCase().includes(names[x].toLowerCase())) {
 										name_2 = names[x];
 										emojiClass_2 = emojiList.find('name', pixieClass[index].toLowerCase());
 										statEmbed_2.setColor(EmbedColor[index]);
@@ -127,33 +129,37 @@ module.exports = {
 										}
 										//	Compare stats
 										const genicMin = Math.min(genicRank, genicRank_2);
-										for(const x in data) {
-											const dif = Math.abs(statTable[x][genicMin + 1] - statTable_2[x][genicMin + 1]).toFixed(1);
-											const statDesc = statTable[x][0];
-											const statDesc_2 = statTable_2[x][0];
-											data_2[x] = `${emojiList.find('name', statDesc_2.toLowerCase())}${statDesc_2} : ***${statTable_2[x][genicMin + 1]}%*** (+${(statTable_2[x][2] - statTable_2[x][1]).toFixed(1)}% /Genic)`;
-											data[x] = `${emojiList.find('name', statDesc.toLowerCase())}${statDesc} : ***${statTable[x][genicMin + 1]}%*** (+${(statTable[x][2] - statTable[x][1]).toFixed(1)}% /Genic)`;
-											if(parseFloat(statTable[x][genicMin + 1]) > parseFloat(statTable_2[x][genicMin + 1])) {
-												data[x] += ` 	${emojiList.find('name', 'plus')} **${dif}%**`;
-												data_2[x] += ` 	${emojiList.find('name', 'minus')} **${dif}%**`;
-											}
+										//	Stat Tables for both pixie exists
+										if(data.length && data_2.length) {
+											for(const x in data) {
+												const dif = Math.abs(statTable[x][genicMin + 1] - statTable_2[x][genicMin + 1]).toFixed(1);
+												const statDesc = statTable[x][0];
+												const statDesc_2 = statTable_2[x][0];
+												data_2[x] = `${emojiList.find('name', statDesc_2.toLowerCase())}${statDesc_2} : ***${statTable_2[x][genicMin + 1]}%*** (+${(statTable_2[x][2] - statTable_2[x][1]).toFixed(1)}% /Genic)`;
+												data[x] = `${emojiList.find('name', statDesc.toLowerCase())}${statDesc} : ***${statTable[x][genicMin + 1]}%*** (+${(statTable[x][2] - statTable[x][1]).toFixed(1)}% /Genic)`;
+												if(parseFloat(statTable[x][genicMin + 1]) > parseFloat(statTable_2[x][genicMin + 1])) {
+													data[x] += ` 	${emojiList.find('name', 'plus')} **${dif}%**`;
+													data_2[x] += ` 	${emojiList.find('name', 'minus')} **${dif}%**`;
+												}
 
-											else if(parseFloat(statTable[x][genicMin + 1]) < parseFloat(statTable_2[x][genicMin + 1])) {
-												data[x] += ` 	${emojiList.find('name', 'minus')} **${dif}%**`;
-												data_2[x] += ` 	${emojiList.find('name', 'plus')} **${dif}%**`;
+												else if(parseFloat(statTable[x][genicMin + 1]) < parseFloat(statTable_2[x][genicMin + 1])) {
+													data[x] += ` 	${emojiList.find('name', 'minus')} **${dif}%**`;
+													data_2[x] += ` 	${emojiList.find('name', 'plus')} **${dif}%**`;
+												}
+												else {
+													data[x] += ` 	${emojiList.find('name', 'equal')}`;
+													data_2[x] += ` 	${emojiList.find('name', 'equal')}`;
+												}
 											}
-											else {
-												data[x] += ` 	${emojiList.find('name', 'equal')}`;
-												data_2[x] += ` 	${emojiList.find('name', 'equal')}`;
-											}
+											statEmbed_2.setURL('https://masterofeternity.gamepedia.com/Pixie_Stat_Comparison')
+												.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL)
+												.setTitle(emojiList.find('name', 'analysis').toString() + ' ' + `Stats Analysis (Genic Rank ${genicMin})`)
+												.setColor('#347cef')
+												.addField(`${emojiClass} ${name}`, data)
+												.addField(`${emojiClass_2} ${name_2}`, data_2, true);
+											return message.channel.send(statEmbed_2);
 										}
-										statEmbed_2.setURL('https://masterofeternity.gamepedia.com/Pixie_Stat_Comparison')
-											.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL)
-											.setTitle(emojiList.find('name', 'analysis').toString() + ' ' + `Stats Analysis (Genic Rank ${genicMin})`)
-											.setColor('#347cef')
-											.addField(`${emojiClass} ${name}`, data)
-											.addField(`${emojiClass_2} ${name_2}`, data_2, true);
-										return message.channel.send(statEmbed_2);
+										else return message.channel.send(`Master ${message.author}, the stats for one of the pixie is not yet updated!`);
 									})
 									.catch(function(err) {
 										console.log(err);
