@@ -99,12 +99,16 @@ module.exports = {
 					});
 			}
 			else {
-				let name, type, classes, grade;
+				let type, classes, grade;
 				const skillsEmbed_2 = new Discord.RichEmbed();
 				const skillsEmbed_3 = new Discord.RichEmbed();
 				//	Make spacing irelevant.
 				if(args.length > 1 && args[1].length > 2) {
-					if(!args[1].includes('+')) args = Array.of(args.join('_'));
+					//	Join all but the last one, because the last args can be the grade of the suit.
+					args = Array.of(...args);
+					const popped = args.pop();
+					args = Array.of(args.join('_'));
+					args.push(popped);
 				}
 				//	Search for details of preferred suits.
 				suitsPrefName.forEach((names, index) => {
@@ -191,7 +195,7 @@ module.exports = {
 											});
 										}
 										//	Send 3 separate embeds, forced to do so.
-										skillsEmbed.setAuthor(`${name} ${grade}`, imageURL, url)
+										skillsEmbed.setAuthor(`${name.replace('_', ' ')} ${grade}`, imageURL, url)
 											.addField(`${dataSkill_1[0]}`, dataSkill_1.slice(1))
 											.setThumbnail(skillURL[0])
 											.setURL(url);
