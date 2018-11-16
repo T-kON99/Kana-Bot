@@ -200,7 +200,7 @@ module.exports = {
 				suitsObj['class'] = suitsClass;
 				suitsObj['pref_name'] = suitsPrefName;
 				suitsObj['non_pref_name'] = suitsNonPrefName;
-				fs.writeFile('./suits.json', JSON.stringify(suitsObj, null, 2), 'utf8', (err) => {
+				fs.writeFileSync('./suits.json', JSON.stringify(suitsObj, null, 2), 'utf8', (err) => {
 					if(err) throw err;
 					else console.log('Suits data updated');
 				});
