@@ -126,17 +126,17 @@ module.exports = {
 		rp(url)
 			.then(function(html) {
 				const $ = cheerio.load(html);
-				const dataField = $('#mw-content-text').children().eq(6).find('td');
-				const pixieDetails = new Discord.Collection();
+				const dataField = $('.mw-parser-output').children().eq(7);
 				const pixieClass = [];
 				const pixieName = [];
 				const pixieObj = {};
-				dataField.each(function() {
-					pixieDetails.set($(this).find('p').text().trim().toLowerCase(), $(this).find('li').text().trim());
-				});
-				pixieDetails.forEach((value, key) => {
-					pixieClass.push(key);
-					pixieName.push(value.split(' '));
+				const _ = cheerio.load(`<table'>${dataField}</table>`);
+				cheerioTableparser(_);
+				const temp = _('table').parsetable(false, false, true);
+				temp.forEach((val) => {
+					const dataTemp = val[0].split(/\n+/g);
+					pixieClass.push(dataTemp.shift().toLowerCase());
+					pixieName.push(dataTemp);
 				});
 				//	Catch pixies data and save in .json.
 				pixieObj['class'] = pixieClass;
