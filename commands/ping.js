@@ -4,7 +4,7 @@ module.exports = {
 	cooldown: 5,
 	updateable: false,
 	permLevel: 'everyone',
-	execute(client, message, args) {
-		message.channel.send(`:ping_pong:  Pong! **${client.ping.toFixed(2)}ms**`);
+	execute(client, message) {
+		message.channel.send(`:ping_pong:  Pong! **${client.ping}ms**`);
 	},
 };
