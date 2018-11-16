@@ -74,7 +74,7 @@ module.exports = {
 					});
 			}
 			else {
-				suitsNonPrefName.forEach((names, index) => {
+				suitsNonPrefName.forEach((names) => {
 					for(const x in names) {
 						if(x) {
 							names.forEach((elem, i) => {
@@ -124,7 +124,7 @@ module.exports = {
 			if(suitsClass.includes(args[0].charAt(0).toUpperCase() + args[0].slice(1).toLowerCase())) {
 				const data = [];
 				const index = suitsClass.indexOf(args[0].charAt(0).toUpperCase() + args[0].slice(1).toLowerCase());
-				suitsNonPrefName.forEach((names, i) => {
+				suitsNonPrefName.forEach((names) => {
 					if(args[1].toLowerCase() == names[0].toLowerCase()) {
 						suitsEmbed.setColor(EmbedColor[index])
 							.setTitle(suitsClass[index] + ' ' + args[1].toUpperCase());
@@ -137,6 +137,7 @@ module.exports = {
 					}
 				});
 			}
+			// eslint-disable-next-line curly
 			else return message.channel.send(`Master ${message.author}, that's an invalid command!`);
 		}
 	},
@@ -145,14 +146,13 @@ module.exports = {
 		rp(url)
 			.then(function(html) {
 				const $ = cheerio.load(html);
-				const dataField = $('#mw-content-text');
+				const dataField = $('.mw-parser-output');
 				const dataPref = dataField.children().find('#Preferred_Suits').parent().next();
 				const dataNonPref = dataField.find('.tabbertab');
 
 				const suitsClass = [];
 				const suitsPrefName = [];
 				const suitsNonPrefName = [];
-				const suitsPrefGrade = [];
 				const suitsObj = {};
 				//	Check if it's a table of preferred suits.
 				if(dataPref.is('table')) {
@@ -160,7 +160,7 @@ module.exports = {
 					cheerioTableparser(_);
 					const table = _('table').parsetable(true, true, true);
 					for(const x in table) {
-						const data = table[x].toString().split(/\n+ /);
+						const data = table[x].toString().split(/\n+/g);
 						suitsClass.push(data[0]);
 						data.shift();
 						for(const suit in data) {
@@ -173,7 +173,7 @@ module.exports = {
 				}
 
 				//	Get non preferred suits data with its respective grade.
-				dataNonPref.each(function(index, element) {
+				dataNonPref.each(function() {
 					const title = $(this).attr('title');
 					const _ = cheerio.load(`<table cellpadding = "2">${$(this)}</table>`);
 					cheerioTableparser(_);
@@ -181,7 +181,7 @@ module.exports = {
 					const temp = [];
 					temp.push(title);
 					for(const x in table) {
-						const data = table[x].toString().split(/\n+ /);
+						const data = table[x].toString().split(/\n+/g);
 						data.shift();
 						for(const suit in data) {
 							if(data[suit].length > 1) {
