@@ -8,8 +8,8 @@ module.exports = class Kana extends Discord.Client {
 	constructor(option) {
 		super(option);
 		this.defaultSettings = config;
-		this.dataPixie = require('../pixies.json');
-		this.dataSuit = require('../suits.json');
+		this.dataPixie = JSON.parse(fs.readFileSync('./pixies.json'));
+		this.dataSuit = JSON.parse(fs.readFileSync('./suits.json'));
 	}
 	loadCommands() {
 		return require('../modules/commands.js')(this);
