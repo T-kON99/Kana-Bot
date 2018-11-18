@@ -126,7 +126,7 @@ module.exports = {
 		rp(url)
 			.then(function(html) {
 				const $ = cheerio.load(html);
-				const dataField = $('.mw-parser-output').children().eq(7);
+				const dataField = $('.mw-parser-output').find('span#Pixies.mw-headline').parent().next();
 				const pixieClass = [];
 				const pixieName = [];
 				const pixieObj = {};
@@ -141,7 +141,7 @@ module.exports = {
 				//	Catch pixies data and save in .json.
 				pixieObj['class'] = pixieClass;
 				pixieObj['name'] = pixieName;
-				fs.writeFileSync('./pixies.json', JSON.stringify(pixieObj, null, 2), 'utf8', (err) => {
+				fs.writeFile('./pixies.json', JSON.stringify(pixieObj, null, 2), 'utf8', (err) => {
 					if(err) throw err;
 					else console.log('Pixies data updated');
 				});
