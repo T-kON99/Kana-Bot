@@ -6,6 +6,9 @@ module.exports = client => {
 	for(const file of commandFiles) {
 		const command = require(`../commands/${file}`);
 		client.commands.set(command.name, command);
+		if(command.aliases) {
+			for(const names of command.aliases) client.commands.set(names, command);
+		}
 	}
 	return client.commands;
 };

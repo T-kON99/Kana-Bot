@@ -1,3 +1,4 @@
+/* eslint-disable curly */
 const Discord = require('discord.js');
 const cooldowns = new Discord.Collection();
 module.exports = (client, message) => {
@@ -13,7 +14,7 @@ module.exports = (client, message) => {
 
 			const args = message.content.slice(prefix.length).trim().split(/ +/g);
 			const commandName = args.shift().toLowerCase();
-			
+
 			if(!client.commands.has(commandName)) return;
 			else {
 				const command = client.commands.get(commandName);
