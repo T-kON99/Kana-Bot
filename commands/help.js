@@ -10,13 +10,20 @@ module.exports = {
 	execute(client, message, args) {
 		const { commands } = message.client;
 		const data = [];
+		const list = [];
 		const helpEmbed = new Discord.RichEmbed()
 			.setAuthor(`${message.client.user.username} Bot`, message.client.user.avatarURL)
 			.setColor('#f442bc');
 		if(!args.length) {
 			const space = ' ';
 			message.author.send('Here are the list of my available commands, Master!');
-			data.push(`\`\`\`asciidoc\n${commands.map(command => config.prefix + command.name + space.repeat(11 - command.name.length) + `:: ${command.description}`).join('\n')}\n\`\`\``);
+			data.push(`\`\`\`asciidoc\n${commands.map(command => {
+				if(!list.includes(command.name)) {
+					list.push(command.name);
+					return config.prefix + command.name + space.repeat(11 - command.name.length) + `:: ${command.description}`;
+				}
+				// eslint-disable-next-line curly
+			}).filter(command => command != null).join('\n')}\n\`\`\``);
 			data.push(`Send \`${config.prefix}help [command name]\` to know more about the command!`);
 			helpEmbed.addField('Commands', data);
 		}
@@ -30,6 +37,7 @@ module.exports = {
 				message.author.send(`Details of \`${config.prefix}${command.name}\``);
 				data.push('```asciidoc\n');
 				for(const prop in command) {
+					// eslint-disable-next-line curly
 					if(prop == 'name' || (typeof command[prop] != 'string' && typeof command[prop] != 'object')) continue;
 					else {
 						if(command[prop]) data.push(prop.charAt(0).toUpperCase() + prop.slice(1).toLowerCase() + space.repeat(15 - prop.length) + ':: ' + command[prop] + '\n');
