@@ -14,6 +14,7 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 
 module.exports = {
 	name: 'skills',
+	aliases: ['skill'],
 	description: 'Get pixies and suits skills',
 	usage: `${config.prefix}skills [pixie] / ${config.prefix}skills [suit Non-preferred] / ${config.prefix}skills [suit Preferred] [grade]`,
 	example: `${config.prefix}skills devi / ${config.prefix}skills ajax / ${config.prefix}skills magata us`,

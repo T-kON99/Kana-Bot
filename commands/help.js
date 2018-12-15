@@ -30,7 +30,7 @@ module.exports = {
 				message.author.send(`Details of \`${config.prefix}${command.name}\``);
 				data.push('```asciidoc\n');
 				for(const prop in command) {
-					if(prop == 'name' || typeof command[prop] != 'string') continue;
+					if(prop == 'name' || (typeof command[prop] != 'string' && typeof command[prop] != 'object')) continue;
 					else {
 						if(command[prop]) data.push(prop.charAt(0).toUpperCase() + prop.slice(1).toLowerCase() + space.repeat(15 - prop.length) + ':: ' + command[prop] + '\n');
 					}

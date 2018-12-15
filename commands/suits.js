@@ -12,6 +12,7 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 
 module.exports = {
 	name: 'suits',
+	aliases: ['suit', 'robo'],
 	description: 'Display current available suits in-game',
 	usage: `${config.prefix}suits [name] / ${config.prefix}suits [class] [grade]`,
 	example: `${config.prefix}suits xiao_chui / ${config.prefix}suits assault us`,
@@ -200,7 +201,7 @@ module.exports = {
 				suitsObj['class'] = suitsClass;
 				suitsObj['pref_name'] = suitsPrefName;
 				suitsObj['non_pref_name'] = suitsNonPrefName;
-				fs.writeFileSync('./suits.json', JSON.stringify(suitsObj, null, 2), 'utf8', (err) => {
+				fs.writeFile('./suits.json', JSON.stringify(suitsObj, null, 2), 'utf8', (err) => {
 					if(err) throw err;
 					else console.log('Suits data updated');
 				});

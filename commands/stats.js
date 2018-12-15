@@ -3,7 +3,7 @@ const config = require('../config.json');
 const rp = require('request-promise');
 const cheerio = require('cheerio'),
 	cheerioTableparser = require('cheerio-tableparser');
-//	const webshot = require('webshot');
+//const webshot = require('webshot');
 
 const urlMaster = 'https://masterofeternity.gamepedia.com';
 
@@ -12,6 +12,7 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 
 module.exports = {
 	name: 'stats',
+	aliases: ['stat'],
 	description: 'Display max stats of pixies or compare stats of pixies',
 	usage: `${config.prefix}stats [pixie] / ${config.prefix}stats [pixie 1] [pixie 2]`,
 	example: `${config.prefix}stats jeanie / ${config.prefix}stats jeanie florence`,
@@ -179,10 +180,10 @@ module.exports = {
 			}
 			else {
 				//	If it's a suit. For now ignored, too many data to send.
+				/*
 				const optionsSelector = {
 					captureSelector: '.mw-content-elt',
 				};
-				/*
 				webshot(urlMaster + '/Elder#C', 'elder.png', optionsSelector, (err) => {
 					console.log('screenshot taken');
 				});
