@@ -106,7 +106,8 @@ module.exports = {
 									break;
 								}
 							}
-							if(!index) {m.channel.send(`Master ${message.author}, that's an invalid command!`);}
+							console.log(index);
+							if(index === undefined) {m.channel.send(`Master ${message.author}, that's an invalid command!`);}
 							else {
 								const data = [];
 								suitsNonPrefName.forEach((names) => {
