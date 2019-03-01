@@ -5,6 +5,7 @@ const fs = require('fs');
 
 const urlMaster = 'https://masterofeternity.gamepedia.com';
 const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
+const suitGrade =    [ 'C', 'B', 'A', 'S', 'S2', 'S3', 'S3+1', 'S3+2', 'S3+3', 'US', 'US+1', 'US+2', 'US+3' ];
 
 //	suitStatInt = ['HP', 'MP', 'ATK', 'DEF', 'ACC', 'EVA'];
 //	suitStatFloat = ['CRT%', 'Crit', 'CNTR', 'STNΩ', 'FRZΩ', 'SILΩ', 'ACDΩ'];
@@ -148,6 +149,23 @@ module.exports = (client, args) => {
 				else suitStat = [];
 				//	Prepend necessary data
 				suitStat.unshift(name, type, user, imageURL, icon, url);
+				//	Sort datas based on grades
+				const list = [];
+				for(const x in grade) {
+					list.push({ 'thumbnailURL' : suitURL[x], 'names' : suitNames[x], 'grade' : grade[x], 'statIntMin' : suitStat[6][x], 'statIntMax' : suitStat[7][x], 'statFloat' : suitStat[9][x], 'statMisc' : suitStat[10][x] });
+				}
+				list.sort((a, b) => {
+					return suitGrade.indexOf(a.grade) - suitGrade.indexOf(b.grade);
+				});
+				for(const x in grade) {
+					grade[x] = list[x].grade;
+					suitStat[6][x] = list[x].statIntMin;
+					suitStat[7][x] = list[x].statIntMax;
+					suitStat[9][x] = list[x].statFloat;
+					suitStat[10][x] = list[x].statMisc;
+					suitNames[x] = list[x].names;
+					suitURL[x] = list[x].thumbnailURL;
+				}
 				const suit = {
 					name:				suitStat[0] || '',
 					names:				suitNames || [],
