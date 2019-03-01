@@ -88,7 +88,7 @@ module.exports = {
 							const statMax = statTable[x][statTable[x].length - 1];
 							statMax_1[x] = statMax;
 							genicRank = statTable[x].length - 2;
-							data.push(`${emojiList.find('name', statDesc.toLowerCase())}${statDesc} : ***${statMax}%*** (+${(statTable[x][2] - statTable[x][1]).toFixed(1)}% /Genic)`);
+							data.push(`${emojiList.find('name', statDesc.toLowerCase())}` + '`' + statDesc.padEnd(3, ' ') + ': ' + '`' + `***${statMax}%*** (+${(statTable[x][2] - statTable[x][1]).toFixed(1)}% /Genic)`);
 							statEmbed.setTitle(emojiClass.toString() + ' ' + name + ` Lvl 48 (Genic Rank ${genicRank})`);
 						}
 						try {
@@ -149,7 +149,7 @@ module.exports = {
 											const statMax = statTable_2[x][statTable_2[x].length - 1];
 											statMax_2[x] = statMax;
 											genicRank_2 = statTable_2[x].length - 2;
-											data_2.push(`${emojiList.find('name', statDesc_2.toLowerCase())}${statDesc_2} : ***${statMax}%*** (+${(statTable_2[x][2] - statTable_2[x][1]).toFixed(1)}% /Genic)`);
+											data_2.push(`${emojiList.find('name', statDesc_2.toLowerCase())}` + '`' + statDesc_2.padEnd(3, ' ') + ': ' + '`' + `***${statMax}%*** (+${(statTable_2[x][2] - statTable_2[x][1]).toFixed(1)}% /Genic)`);
 										}
 										//	Compare stats
 										const genicMin = Math.min(genicRank, genicRank_2);
@@ -159,8 +159,8 @@ module.exports = {
 												const dif = Math.abs(statTable[x][genicMin + 1] - statTable_2[x][genicMin + 1]).toFixed(1);
 												const statDesc = statTable[x][0];
 												const statDesc_2 = statTable_2[x][0];
-												data_2[x] = `${emojiList.find('name', statDesc_2.toLowerCase())}${statDesc_2} : ***${statTable_2[x][genicMin + 1]}%*** (+${(statTable_2[x][2] - statTable_2[x][1]).toFixed(1)}% /Genic)`;
-												data[x] = `${emojiList.find('name', statDesc.toLowerCase())}${statDesc} : ***${statTable[x][genicMin + 1]}%*** (+${(statTable[x][2] - statTable[x][1]).toFixed(1)}% /Genic)`;
+												data_2[x] = `${emojiList.find('name', statDesc_2.toLowerCase())}` + '`' + statDesc_2.padEnd(3, ' ') + ': ' + '`' + `***${statTable_2[x][genicMin + 1]}%*** (+${(statTable_2[x][2] - statTable_2[x][1]).toFixed(1)}% /Genic)`;
+												data[x] = `${emojiList.find('name', statDesc.toLowerCase())}` + '`' + statDesc.padEnd(3, ' ') + ': ' + '`' + `***${statTable[x][genicMin + 1]}%*** (+${(statTable[x][2] - statTable[x][1]).toFixed(1)}% /Genic)`;
 												if(parseFloat(statTable[x][genicMin + 1]) > parseFloat(statTable_2[x][genicMin + 1])) {
 													data[x] += ` 	${emojiList.find('name', 'plus')} **${dif}%**`;
 													data_2[x] += ` 	${emojiList.find('name', 'minus')} **${dif}%**`;
