@@ -213,52 +213,60 @@ module.exports = {
 					}
 				}
 				if(args.length == 1) {
+					message.channel.startTyping();
 					const suit = await getSuit(client, args[0]);
+					message.channel.stopTyping();
 					console.log(suit);
 					if(suit) {
 						let indexInt = 0;
 						let indexFloat = 0;
-						//	Find highest grade available.
-						for(const x in suit.statIntMin) {
-							if(suit.statIntMin[x].includes('N/A')) {
-								if(indexInt > 0) indexInt--;
-								break;
+						if(suit.statIntMin.length && suit.statFloat.length) {
+							//	Find highest grade available.
+							for(const x in suit.statIntMin) {
+								if(suit.statIntMin[x].includes('N/A')) {
+									if(indexInt > 0) indexInt--;
+									break;
+								}
+								else {
+									if(indexInt < suit.statIntMin.length - 1) indexInt++;
+								}
 							}
-							else {
-								if(indexInt < suit.statIntMin.length - 1) indexInt++;
+							for(const x in suit.statFloat) {
+								if(suit.statFloat[x].includes('N/A')) {
+									if(indexFloat > 0) indexFloat--;
+									break;
+								}
+								else {
+									if(indexFloat < suit.statIntMin.length - 1) indexFloat++;
+								}
 							}
-						}
-						for(const x in suit.statFloat) {
-							if(suit.statFloat[x].includes('N/A')) {
-								if(indexFloat > 0) indexFloat--;
-								break;
+							const index = Math.min(indexInt, indexFloat);
+							const suitStatMin = suit.statIntMin[index].split(',');
+							const suitStatFloat = suit.statFloat[index].split(',');
+							const suitLevel = suitStatMin[0].charAt(0).toUpperCase() + suitStatMin[0].slice(1).toLowerCase();
+							suitStatMin.shift();
+							const dataStatMin = [];
+							for(const x in suitStatMin) {
+								dataStatMin.push(emojiList.find('name', suitStatIntLegend[x].toLowerCase()) + '`' + suitStatIntLegend[x] + ' '.repeat(3 - suitStatIntLegend[x].length) + ': ' + '`' + `***${suitStatMin[x].split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}***`);
 							}
-							else {
-								if(indexFloat < suit.statIntMin.length - 1) indexFloat++;
+							const dataStatFloat = [];
+							for(const x in suitStatFloat) {
+								dataStatFloat.push('`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat[x]}***`);
 							}
+							suitsEmbed.setTitle(emojiList.find('name', suit.classes.toLowerCase()).toString() + ' ' + suit.names[index].split('_').join(' ') + ' ' + suitLevel)
+								.setThumbnail(suit.thumbnailURL[index])
+								.setColor(suit.color)
+								.addField('**Basic Stats**', dataStatMin, true)
+								.addField('**Advanced Stats**', dataStatFloat, true)
+								.setURL(suit.url)
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
+							if(suit.imageURL !== suit.thumbnailURL[index]) suitsEmbed.setImage(suit.imageURL);
+							message.channel.send(suitsEmbed);
 						}
-						const index = Math.min(indexInt, indexFloat);
-						const suitStatMin = suit.statIntMin[index].split(',');
-						const suitStatFloat = suit.statFloat[index].split(',');
-						const suitLevel = suitStatMin[0].charAt(0).toUpperCase() + suitStatMin[0].slice(1).toLowerCase();
-						suitStatMin.shift();
-						const dataStatMin = [];
-						for(const x in suitStatMin) {
-							dataStatMin.push(emojiList.find('name', suitStatIntLegend[x].toLowerCase()) + '`' + suitStatIntLegend[x] + ' '.repeat(3 - suitStatIntLegend[x].length) + ': ' + '`' + `***${suitStatMin[x].split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}***`);
+						else {
+							message.channel.send(`Master ${message.author}, the wiki for ${suit.name} has incomplete stats! Please contact guidemakers to fix it!`);
+							message.channel.send(suit.url);
 						}
-						const dataStatFloat = [];
-						for(const x in suitStatFloat) {
-							dataStatFloat.push('`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat[x]}***`);
-						}
-						suitsEmbed.setTitle(emojiList.find('name', suit.classes.toLowerCase()).toString() + ' ' + suit.names[index].split('_').join(' ') + ' ' + suitLevel)
-							.setThumbnail(suit.thumbnailURL[index])
-							.setColor(suit.color)
-							.addField('**Basic Stats**', dataStatMin, true)
-							.addField('**Advanced Stats**', dataStatFloat, true)
-							.setURL(suit.url)
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
-						if(suit.imageURL !== suit.thumbnailURL[index]) suitsEmbed.setImage(suit.imageURL);
-						message.channel.send(suitsEmbed);
 					}
 					else {
 						return message.channel.send(`Master ${message.author}, that suit does not exist!`);
@@ -266,131 +274,144 @@ module.exports = {
 				}
 				else {
 					//	Compares 2 suits, bad way, can and should be improved.
+					message.channel.startTyping();
 					const suit = await getSuit(client, args[0]);
 					const suit_2 = await getSuit(client, args[1]);
+					message.channel.stopTyping();
 					let indexInt = 0;
 					let indexFloat = 0;
-					for(const x in suit.statIntMin) {
-						if(suit.statIntMin[x].includes('N/A')) {
-							if(indexInt > 0) indexInt--;
-							break;
+					if(suit.statIntMin.length && suit.statFloat.length) {
+						if(suit_2.statIntMin.length && suit_2.statFloat.length) {
+							for(const x in suit.statIntMin) {
+								if(suit.statIntMin[x].includes('N/A')) {
+									if(indexInt > 0) indexInt--;
+									break;
+								}
+								else {
+									if(indexInt < suit.statIntMin.length - 1) indexInt++;
+								}
+							}
+							for(const x in suit.statFloat) {
+								if(suit.statFloat[x].includes('N/A')) {
+									if(indexFloat > 0) indexFloat--;
+									break;
+								}
+								else {
+									if(indexFloat < suit.statIntMin.length - 1) indexFloat++;
+								}
+							}
+							let indexInt_2 = 0;
+							let indexFloat_2 = 0;
+							for(const x in suit_2.statIntMin) {
+								if(suit_2.statIntMin[x].includes('N/A')) {
+									if(indexInt_2 > 0) indexInt_2--;
+									break;
+								}
+								else {
+									if(indexInt_2 < suit_2.statIntMin.length - 1) indexInt_2++;
+								}
+							}
+							for(const x in suit_2.statFloat) {
+								if(suit_2.statFloat[x].includes('N/A')) {
+									if(indexFloat_2 > 0) indexFloat_2--;
+									break;
+								}
+								else {
+									if(indexFloat_2 < suit_2.statIntMin.length - 1) indexFloat_2++;
+								}
+							}
+							let index_1 = Math.min(indexInt, indexFloat);
+							let index_2 = Math.min(indexInt_2, indexFloat_2);
+							let indexOffset, indexOffset_2;
+							for(const x in suitGrade) {
+								if(suitGrade[x] === suit.grade[index_1]) indexOffset = x;
+								if(suitGrade[x] === suit_2.grade[index_2]) indexOffset_2 = x;
+							}
+							const indexDif = Math.abs(indexOffset - indexOffset_2);
+							if(Number(indexOffset) > Number(indexOffset_2)) {
+								index_1 -= indexDif;
+							}
+							else index_2 -= indexDif;
+							if(index_1 < 0) {
+								message.channel.send(`${suit.name} doesn't have ${suit_2.grade[index_2]} version! Comparing the suits at the closest grade I can find Master ${message.author}!`);
+								index_1 = 0;
+							}
+							else if(index_2 < 0) {
+								message.channel.send(`${suit_2.name} doesn't have ${suit.grade[index_1]} version! Comparing the suits at the closest grade I can find Master ${message.author}!`);
+								index_2 = 0;
+							}
+							console.log(suit);
+							console.log(suit_2);
+							console.log(index_1 + ' ' + index_2);
+							const suitStatMin = suit.statIntMin[index_1].split(',');
+							const suitStatMin_2 = suit_2.statIntMin[index_2].split(',');
+							const suitStatFloat = suit.statFloat[index_1].split(',');
+							const suitStatFloat_2 = suit_2.statFloat[index_2].split(',');
+							const suitLevel = suitStatMin[0].charAt(0).toUpperCase() + suitStatMin[0].slice(1).toLowerCase();
+							const suitLevel_2 = suitStatMin_2[0].charAt(0).toUpperCase() + suitStatMin_2[0].slice(1).toLowerCase();
+							suitStatMin.shift();
+							suitStatMin_2.shift();
+							const dataStatMin = [];
+							const dataStatMin_2 = [];
+							for(const x in suitStatMin) {
+								const dif = Number(suitStatMin[x]) - Number(suitStatMin_2[x]);
+								let data = emojiList.find('name', suitStatIntLegend[x].toLowerCase()) + '`' + suitStatIntLegend[x] + ' '.repeat(3 - suitStatIntLegend[x].length) + ': ' + '`' + `***${suitStatMin[x].split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}***`;
+								let data_2 = emojiList.find('name', suitStatIntLegend[x].toLowerCase()) + '`' + suitStatIntLegend[x] + ' '.repeat(3 - suitStatIntLegend[x].length) + ': ' + '`' + `***${suitStatMin_2[x].split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}***`;
+								if(dif > 0) {
+									data += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
+									data_2 += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
+								}
+								else if(dif < 0) {
+									data += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
+									data_2 += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
+								}
+								else {
+									data += ` 	${emojiList.find('name', 'equal')}`;
+									data_2 += ` 	${emojiList.find('name', 'equal')}`;
+								}
+								dataStatMin.push(data);
+								dataStatMin_2.push(data_2);
+							}
+							const dataStatFloat = [];
+							const dataStatFloat_2 = [];
+							for(const x in suitStatFloat) {
+								const dif = (Number.parseFloat(suitStatFloat[x]) - Number.parseFloat(suitStatFloat_2[x])).toFixed(1);
+								let data = '`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat[x]}***`;
+								let data_2 = '`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat_2[x]}***`;
+								if(dif > 0) {
+									data += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif)}%**`;
+									data_2 += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif)}%**`;
+								}
+								else if(dif < 0) {
+									data += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif)}%**`;
+									data_2 += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif)}%**`;
+								}
+								else {
+									data += ` 	${emojiList.find('name', 'equal')}`;
+									data_2 += ` 	${emojiList.find('name', 'equal')}`;
+								}
+								dataStatFloat.push(data);
+								dataStatFloat_2.push(data_2);
+							}
+							suitsEmbed.setTitle(emojiList.find('name', 'analysis') + 'Stats Analysis')
+								.setColor('#347cef')
+								.addField(`${emojiList.find('name', suit.classes.toLowerCase())} ${suit.names[index_1]} ${suitLevel} **Basic Stats**`, dataStatMin, true)
+								.addField('**Advanced Stats**', dataStatFloat, true)
+								.addField(`${emojiList.find('name', suit_2.classes.toLowerCase())} ${suit_2.names[index_2]} ${suitLevel_2} **Basic Stats**`, dataStatMin_2, true)
+								.addField('**Advanced Stats**', dataStatFloat_2, true)
+								.setURL('https://masterofeternity.gamepedia.com/Pixie_Stat_Comparison')
+								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
+							message.channel.send(suitsEmbed);
 						}
 						else {
-							if(indexInt < suit.statIntMin.length - 1) indexInt++;
+							message.channel.send(`Master ${message.author}, the wiki for ${suit_2.name} has incomplete stats! Please contact guidemakers to fix it!`);
+							message.channel.send(suit_2.url);
 						}
 					}
-					for(const x in suit.statFloat) {
-						if(suit.statFloat[x].includes('N/A')) {
-							if(indexFloat > 0) indexFloat--;
-							break;
-						}
-						else {
-							if(indexFloat < suit.statIntMin.length - 1) indexFloat++;
-						}
+					else {
+						message.channel.send(`Master ${message.author}, the wiki for ${suit.name} has incomplete stats! Please contact guidemakers to fix it!`);
+						message.channel.send(suit.url);
 					}
-					let indexInt_2 = 0;
-					let indexFloat_2 = 0;
-					for(const x in suit_2.statIntMin) {
-						if(suit_2.statIntMin[x].includes('N/A')) {
-							if(indexInt_2 > 0) indexInt_2--;
-							break;
-						}
-						else {
-							if(indexInt_2 < suit_2.statIntMin.length - 1) indexInt_2++;
-						}
-					}
-					for(const x in suit_2.statFloat) {
-						if(suit_2.statFloat[x].includes('N/A')) {
-							if(indexFloat_2 > 0) indexFloat_2--;
-							break;
-						}
-						else {
-							if(indexFloat_2 < suit_2.statIntMin.length - 1) indexFloat_2++;
-						}
-					}
-					let index_1 = Math.min(indexInt, indexFloat);
-					let index_2 = Math.min(indexInt_2, indexFloat_2);
-					let indexOffset, indexOffset_2;
-					for(const x in suitGrade) {
-						if(suitGrade[x] === suit.grade[index_1]) indexOffset = x;
-						if(suitGrade[x] === suit_2.grade[index_2]) indexOffset_2 = x;
-					}
-					const indexDif = Math.abs(indexOffset - indexOffset_2);
-					if(Number(indexOffset) > Number(indexOffset_2)) {
-						index_1 -= indexDif;
-					}
-					else index_2 -= indexDif;
-					if(index_1 < 0) {
-						message.channel.send(`${suit.name} doesn't have ${suit_2.grade[index_2]} version! Comparing the suits at the closest grade I can find Master ${message.author}!`);
-						index_1 = 0;
-					}
-					else if(index_2 < 0) {
-						message.channel.send(`${suit_2.name} doesn't have ${suit.grade[index_1]} version! Comparing the suits at the closest grade I can find Master ${message.author}!`);
-						index_2 = 0;
-					}
-					console.log(suit);
-					console.log(suit_2);
-					console.log(index_1 + ' ' + index_2);
-					const suitStatMin = suit.statIntMin[index_1].split(',');
-					const suitStatMin_2 = suit_2.statIntMin[index_2].split(',');
-					const suitStatFloat = suit.statFloat[index_1].split(',');
-					const suitStatFloat_2 = suit_2.statFloat[index_2].split(',');
-					const suitLevel = suitStatMin[0].charAt(0).toUpperCase() + suitStatMin[0].slice(1).toLowerCase();
-					const suitLevel_2 = suitStatMin_2[0].charAt(0).toUpperCase() + suitStatMin_2[0].slice(1).toLowerCase();
-					suitStatMin.shift();
-					suitStatMin_2.shift();
-					const dataStatMin = [];
-					const dataStatMin_2 = [];
-					for(const x in suitStatMin) {
-						const dif = Number(suitStatMin[x]) - Number(suitStatMin_2[x]);
-						let data = emojiList.find('name', suitStatIntLegend[x].toLowerCase()) + '`' + suitStatIntLegend[x] + ' '.repeat(3 - suitStatIntLegend[x].length) + ': ' + '`' + `***${suitStatMin[x].split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}***`;
-						let data_2 = emojiList.find('name', suitStatIntLegend[x].toLowerCase()) + '`' + suitStatIntLegend[x] + ' '.repeat(3 - suitStatIntLegend[x].length) + ': ' + '`' + `***${suitStatMin_2[x].split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}***`;
-						if(dif > 0) {
-							data += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
-							data_2 += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
-						}
-						else if(dif < 0) {
-							data += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
-							data_2 += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif).toString().split(/(?=(?:\d{3})+(?:\.|$))/g).join(',')}**`;
-						}
-						else {
-							data += ` 	${emojiList.find('name', 'equal')}`;
-							data_2 += ` 	${emojiList.find('name', 'equal')}`;
-						}
-						dataStatMin.push(data);
-						dataStatMin_2.push(data_2);
-					}
-					const dataStatFloat = [];
-					const dataStatFloat_2 = [];
-					for(const x in suitStatFloat) {
-						const dif = (Number.parseFloat(suitStatFloat[x]) - Number.parseFloat(suitStatFloat_2[x])).toFixed(1);
-						let data = '`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat[x]}***`;
-						let data_2 = '`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat_2[x]}***`;
-						if(dif > 0) {
-							data += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif)}%**`;
-							data_2 += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif)}%**`;
-						}
-						else if(dif < 0) {
-							data += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif)}%**`;
-							data_2 += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif)}%**`;
-						}
-						else {
-							data += ` 	${emojiList.find('name', 'equal')}`;
-							data_2 += ` 	${emojiList.find('name', 'equal')}`;
-						}
-						dataStatFloat.push(data);
-						dataStatFloat_2.push(data_2);
-					}
-					suitsEmbed.setTitle(emojiList.find('name', 'analysis') + 'Stats Analysis')
-						.setColor('#347cef')
-						.addField(`${emojiList.find('name', suit.classes.toLowerCase())} ${suit.names[index_1]} ${suitLevel} **Basic Stats**`, dataStatMin, true)
-						.addField('**Advanced Stats**', dataStatFloat, true)
-						.addField(`${emojiList.find('name', suit_2.classes.toLowerCase())} ${suit_2.names[index_2]} ${suitLevel_2} **Basic Stats**`, dataStatMin_2, true)
-						.addField('**Advanced Stats**', dataStatFloat_2, true)
-						.setURL('https://masterofeternity.gamepedia.com/Pixie_Stat_Comparison')
-						.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
-					message.channel.send(suitsEmbed);
-
 				}
 			}
 		}

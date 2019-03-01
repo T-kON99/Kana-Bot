@@ -34,13 +34,16 @@ module.exports = {
 			args.push(popped);
 		}
 		if(args.length) {
+			message.channel.startTyping();
 			const suit = await getSuit(client, args[0]);
+			console.log(suit);
+			message.channel.stopTyping();
 			let grade;
-			//	If user specified the grade
-			if(args[1]) grade = args[1].toUpperCase();
-			//	Default if not.
-			else grade = suit.grade[0];
-			if(suit.name) {
+			if(suit) {
+				//	If user specified the grade
+				if(args[1]) grade = args[1].toUpperCase();
+				//	Default if not.
+				else grade = suit.grade[0];
 				let index;
 				for(const x in suit.grade) {
 					if(grade === suit.grade[x]) {
@@ -74,7 +77,11 @@ module.exports = {
 					message.channel.send(suitsEmbed);
 				}
 				else {
-					return message.channel.send(`Master ${message.author}, that suit does not have ${grade} version! Please check your grade!`);
+					if(grade === undefined) {
+						message.channel.send(`Master ${message.author}, the wiki for ${suit.name} has error! Please contact guidemakers to fix it!`);
+						message.channel.send(suit.url);
+					}
+					else return message.channel.send(`Master ${message.author}, that suit does not have ${grade} version! Please check your grade!`);
 				}
 			}
 			else {
