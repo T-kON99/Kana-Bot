@@ -46,6 +46,7 @@ module.exports = (client, message) => {
 				//	Do commands.
 				try{
 					command.execute(client, message, args);
+					console.log(`${message.author} ran ${command.name} in ${message.channel}`);
 				}
 				catch(err) {
 					console.log(err);
