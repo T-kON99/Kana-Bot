@@ -5,6 +5,6 @@ module.exports = {
 	updateable: false,
 	permLevel: 'everyone',
 	execute(client, message) {
-		message.channel.send(`:ping_pong:  Pong! **${client.ping}ms**`);
+		message.channel.send(`:ping_pong:  Pong! **${client.ping.toFixed(1)}ms**`);
 	},
 };
