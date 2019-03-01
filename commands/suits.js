@@ -36,14 +36,14 @@ module.exports = {
 		if(args.length) {
 			message.channel.startTyping();
 			const suit = await getSuit(client, args[0]);
-			console.log(suit);
 			message.channel.stopTyping();
 			let grade;
 			if(suit) {
-				//	If user specified the grade
+				//	If user specified the grade, default if not.
 				if(args[1]) grade = args[1].toUpperCase();
-				//	Default if not.
-				else grade = suit.grade[0];
+				else grade = suit.grade[suit.grade.length - 1];
+				//	US+3 is not yet out.
+				if(grade === 'US+3') grade = suit.grade[suit.grade.length - 2];
 				let index;
 				for(const x in suit.grade) {
 					if(grade === suit.grade[x]) {
@@ -106,7 +106,6 @@ module.exports = {
 									break;
 								}
 							}
-							console.log(index);
 							if(index === undefined) {m.channel.send(`Master ${message.author}, that's an invalid command!`);}
 							else {
 								const data = [];
