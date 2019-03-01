@@ -4,6 +4,7 @@ const rp = require('request-promise');
 const cheerio = require('cheerio'),
 	cheerioTableparser = require('cheerio-tableparser');
 const fs = require('fs');
+const getSuit = require('../modules/requestSuit.js');
 
 const urlMaster = 'https://masterofeternity.gamepedia.com';
 
@@ -12,134 +13,117 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 
 module.exports = {
 	name: 'suits',
-	aliases: ['suit', 'robo'],
+	aliases: ['suit', 'robo', 'su'],
 	description: 'Display current available suits in-game',
 	usage: `${config.prefix}suits [name] / ${config.prefix}suits [class] [grade]`,
 	example: `${config.prefix}suits xiao_chui / ${config.prefix}suits assault us`,
 	cooldown: 3,
 	updateable: true,
 	permLevel: 'everyone',
-	execute(client, message, args) {
+	async execute(client, message, args) {
 		const suitsEmbed = new Discord.RichEmbed()
 			.setColor('#f442bc');
 		const suitsClass = client.dataSuit.class;
 		const suitsPrefName = client.dataSuit.pref_name;
 		const suitsNonPrefName = client.dataSuit.non_pref_name;
 
-		if(!args.length) {
-			message.channel.send(`Master ${message.author}, that's not how you use the command!`);
-			return message.channel.send(`**Usage** : \`${config.prefix}suits [name]\` / \`${config.prefix}suits [class] [grade]\``);
+		if(args.length > 1 && args[1].length > 2) {
+			args = Array.of(...args);
+			const popped = args.pop();
+			args = Array.of(args.join('_'));
+			args.push(popped);
 		}
-		else {
-			if(args.length > 1 && args[1].length > 2) {
-				args = Array.of(args.join('_'));
-			}
-		}
-		if(args.length == 1) {
-			let name, grade, classes, type;
-			suitsPrefName.forEach((names, index) => {
-				for(const x in names) {
-					if(names[x].toLowerCase().includes(args[0].toLowerCase()) || args[0].toLowerCase().includes(names[x].toLowerCase())) {
-						classes = suitsClass[index];
-						suitsEmbed.setColor(EmbedColor[index]);
-						type = 'Preferred Suits';
-						name = names[x];
-						return true;
+		if(args.length) {
+			const suit = await getSuit(client, args[0]);
+			let grade;
+			//	If user specified the grade
+			if(args[1]) grade = args[1].toUpperCase();
+			//	Default if not.
+			else grade = suit.grade[0];
+			if(suit.name) {
+				let index;
+				for(const x in suit.grade) {
+					if(grade === suit.grade[x]) {
+						index = x;
+						break;
 					}
 				}
-			});
-			//	Preferred suits.
-			if(name && args[0].length != 1) {
-				const url = urlMaster + `/${name}`;
-				rp(url)
-					.then(function(html) {
-						const $ = cheerio.load(html);
-						const icon = $('#mw-content-text').find('img')[1].attribs.src;
-						let imageURL = $('#mw-content-text').find('img')[4].attribs.src;
-						let user = $('#mw-content-text').find('a')[1].attribs.title;
-						//	Temporary fix before new template
-						if(!user) {
-							user = $('#mw-content-text').find('a')[0].attribs.title || $('#Obtained_By').parent().next().find('a')[0].attribs.title;
-							imageURL = $('#mw-content-text').find('img')[2].attribs.src;
+				if(index) {
+					const statMiscLegend = [];
+					const statMisc = [];
+					let data;
+					suitsEmbed.setTitle(client.emojiList.find('name', suit.classes.toLowerCase()).toString() + ' ' + suit.names[index].split('_').join(' '))
+						.setThumbnail(suit.thumbnailURL[index])
+						.addField('**Type**', `\`${suit.type}\` (${suit.user})`, true)
+						.addField('**Class**', `\`${suit.classes}\``, true)
+						.addField('**Manufacturer**', `\`${suit.manufacturer}\``)
+						.setColor(suit.color)
+						.setURL(suit.url)
+						.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
+					if(suit.imageURL !== suit.thumbnailURL[index]) suitsEmbed.setImage(suit.imageURL);
+					if(suit.statMisc.length) {
+						data = suit.statMisc[index].split(',');
+						for(const x in data) {
+							if(x % 2) statMisc.push(data[x]);
+							else statMiscLegend.push(data[x]);
 						}
-						suitsEmbed.setAuthor(name.split('_').join(' '), icon, url)
-							.setThumbnail(imageURL)
-							.addField('**Type**', `\`${type}\` (${user})`)
-							.addField('**Class**', `\`${classes}\``)
-							.setURL(urlMaster + `/${name}`)
-							.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
-						message.channel.send(suitsEmbed);
-					})
-					.catch(function(err) {
-						console.log(err);
-					});
-			}
-			else {
-				suitsNonPrefName.forEach((names) => {
-					for(const x in names) {
-						if(x) {
-							names.forEach((elem, i) => {
-								for(const y in elem) {
-									if(elem[y].toLowerCase().includes(args[0].toLowerCase())) {
-										classes = suitsClass[i - 1];
-										suitsEmbed.setColor(EmbedColor[i - 1]);
-										type = 'Non-Preferred Suits';
-										grade = names[0];
-										name = elem[y];
-										return true;
-									}
-								}
-							});
+						for(const x in statMisc) {
+							suitsEmbed.addField(`**${statMiscLegend[x]}**`, `\`${statMisc[x]}\``, true);
 						}
 					}
-				});
-				//	Non-preferred suits, do not search for !suits [a single alphabet] because it has conflict with grades in search.
-				if(name && args[0].length != 1) {
-					const url = urlMaster + `/${name}`;
-					rp(url)
-						.then(function(html) {
-							const $ = cheerio.load(html);
-							const image = $('#mw-content-text').find('img');
-							const icon = image[1].attribs.src;
-							//	Dynamic imageURL
-							const imageURL = $('#mw-content-text').find('img')[image.length - 4].attribs.src;
-							suitsEmbed.setAuthor(name.split('_').join(' '), icon, url)
-								.setThumbnail(imageURL)
-								.addField('**Type**', `\`${type}\``)
-								.addField('**Class**', `\`${classes}\``)
-								.addField('**Grade**', `\`${grade}\``)
-								.setURL(urlMaster + `/${name}`)
-								.setFooter(`Requested by ${message.author.username}`, message.author.avatarURL);
-							message.channel.send(suitsEmbed);
-						})
-						.catch(function(err) {
-							console.log(err);
-						});
+					message.channel.send(suitsEmbed);
 				}
 				else {
-					return message.channel.send(`Master ${message.author}, that suit does not exist!`);
+					return message.channel.send(`Master ${message.author}, that suit does not have ${grade} version! Please check your grade!`);
 				}
+			}
+			else {
+				return message.channel.send(`Master ${message.author}, that suit does not exist!`);
 			}
 		}
 		else {
-			if(suitsClass.includes(args[0].charAt(0).toUpperCase() + args[0].slice(1).toLowerCase())) {
-				const data = [];
-				const index = suitsClass.indexOf(args[0].charAt(0).toUpperCase() + args[0].slice(1).toLowerCase());
-				suitsNonPrefName.forEach((names) => {
-					if(args[1].toLowerCase() == names[0].toLowerCase()) {
-						suitsEmbed.setColor(EmbedColor[index])
-							.setTitle(suitsClass[index] + ' ' + args[1].toUpperCase());
-						suitsEmbed.addField('**Preferred**', suitsPrefName[index].toString().split('_').join(' ').split(',').join(', '));
-						if(names[index + 1].length) {
-							data.push(names[index + 1]);
-							suitsEmbed.addField('**Non-Preferred**', data.toString().split('_').join(' ').split(',').join(', '));
+			message.channel.send(`Which type of suit **(bombardier, assault, sniper, support)** and at what grade **(US, S3, etc)**, Master ${message.author}? Search will be ignored in 10 seconds`)
+				.then(m => {
+					m.channel.awaitMessages(response => response.content, {
+						max: 1,
+						time: 10000,
+						errors: ['time'],
+					}).then((collected) => {
+						const ans = collected.first().content.split(' ');
+						if(ans.length > 1) {
+							let index;
+							for(const x in suitsClass) {
+								const val = suitsClass[x];
+								if(val.toLowerCase().includes(ans[0].toLowerCase()) || ans[0].toLowerCase().includes(val.toLowerCase())) {
+									index = Number(x);
+									break;
+								}
+							}
+							if(!index) {m.channel.send(`Master ${message.author}, that's an invalid command!`);}
+							else {
+								const data = [];
+								suitsNonPrefName.forEach((names) => {
+									if(ans[1].toLowerCase() == names[0].toLowerCase()) {
+										suitsEmbed.setColor(EmbedColor[index])
+											.setTitle(suitsClass[index] + ' ' + ans[1].toUpperCase());
+										suitsEmbed.addField('**Preferred**', suitsPrefName[index].toString().split('_').join(' ').split(',').join(', '));
+										if(names[index + 1].length) {
+											data.push(names[index + 1]);
+											suitsEmbed.addField('**Non-Preferred**', data.toString().split('_').join(' ').split(',').join(', '));
+										}
+										return m.channel.send(suitsEmbed);
+									}
+								});
+							}
 						}
-						return message.channel.send(suitsEmbed);
-					}
+						else {m.channel.send(`Master ${message.author}, that's an invalid command!`);}
+					}).catch((err) => {
+						console.log(err);
+						m.edit('Search ignored');
+					});
 				});
-			}
+			//	Send a list of available suits in-game.
 			// eslint-disable-next-line curly
-			else return message.channel.send(`Master ${message.author}, that's an invalid command!`);
 		}
 	},
 	update() {
