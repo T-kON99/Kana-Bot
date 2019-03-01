@@ -312,8 +312,8 @@ module.exports = {
 					let index_2 = Math.min(indexInt_2, indexFloat_2);
 					let indexOffset, indexOffset_2;
 					for(const x in suitGrade) {
-						if(suitGrade[x] === suit.grade[0]) indexOffset = x;
-						if(suitGrade[x] === suit_2.grade[0]) indexOffset_2 = x;
+						if(suitGrade[x] === suit.grade[index_1]) indexOffset = x;
+						if(suitGrade[x] === suit_2.grade[index_2]) indexOffset_2 = x;
 					}
 					const indexDif = Math.abs(indexOffset - indexOffset_2);
 					if(Number(indexOffset) > Number(indexOffset_2)) {
@@ -328,6 +328,9 @@ module.exports = {
 						message.channel.send(`${suit_2.name} doesn't have ${suit.grade[index_1]} version! Comparing the suits at the closest grade I can find Master ${message.author}!`);
 						index_2 = 0;
 					}
+					console.log(suit);
+					console.log(suit_2);
+					console.log(index_1 + ' ' + index_2);
 					const suitStatMin = suit.statIntMin[index_1].split(',');
 					const suitStatMin_2 = suit_2.statIntMin[index_2].split(',');
 					const suitStatFloat = suit.statFloat[index_1].split(',');
