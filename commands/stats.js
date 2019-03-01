@@ -364,12 +364,12 @@ module.exports = {
 						let data = '`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat[x]}***`;
 						let data_2 = '`' + suitStatFloatLegend[x].toUpperCase() + ' '.repeat(6 - suitStatFloatLegend[x].length) + ': ' + '`' + `***${suitStatFloat_2[x]}***`;
 						if(dif > 0) {
-							data += ` 	${emojiList.find('name', 'plus')} **${dif}%**`;
-							data_2 += ` 	${emojiList.find('name', 'minus')} **${dif}%**`;
+							data += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif)}%**`;
+							data_2 += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif)}%**`;
 						}
 						else if(dif < 0) {
-							data += ` 	${emojiList.find('name', 'minus')} **${dif}%**`;
-							data_2 += ` 	${emojiList.find('name', 'plus')} **${dif}%**`;
+							data += ` 	${emojiList.find('name', 'minus')} **${Math.abs(dif)}%**`;
+							data_2 += ` 	${emojiList.find('name', 'plus')} **${Math.abs(dif)}%**`;
 						}
 						else {
 							data += ` 	${emojiList.find('name', 'equal')}`;
