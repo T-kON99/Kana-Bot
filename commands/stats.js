@@ -19,9 +19,9 @@ const suitGrade =    [ 'C', 'B', 'A', 'S', 'S2', 'S3', 'S3+1', 'S3+2', 'S3+3', '
 module.exports = {
 	name: 'stats',
 	aliases: ['stat', 'st'],
-	description: 'Display max stats of pixies or compare stats of pixies',
-	usage: `${config.prefix}stats [pixie] / ${config.prefix}stats [pixie 1] [pixie 2]`,
-	example: `${config.prefix}stats jeanie / ${config.prefix}stats jeanie florence`,
+	description: 'Display max stats of pixies/suits or compare them',
+	usage: `${config.prefix}stats [pixie] / ${config.prefix}stats [suits 1] [suits 2]`,
+	example: `${config.prefix}stats jeanie / ${config.prefix}stats pygma antigone`,
 	cooldown: 3,
 	updateable: false,
 	permLevel: 'everyone',
