@@ -50,8 +50,8 @@ module.exports = {
 		client.generateInvite()
 			.then(link => {
 				helpEmbed.addField('**Want me in your server?**', `[Add me Master!](${link})`);
+				if(message.channel.type != 'dm') message.channel.send(`Master ${message.author}, I personally have a DM for you!`);
+				message.author.send(helpEmbed);
 			});
-		if(message.channel.type != 'dm') message.channel.send(`Master ${message.author}, I personally have a DM for you!`);
-		message.author.send(helpEmbed);
 	},
 };
