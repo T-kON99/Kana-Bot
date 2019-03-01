@@ -12,7 +12,7 @@ const EmbedColor = ['#d80f0f', '#0cf9ea', '#d67608', '#fffa00'];
 
 module.exports = {
 	name: 'pixies',
-	aliases: ['pixie', 'pix', 'pixi', 'char'],
+	aliases: ['pixie', 'pix', 'pixi', 'char', 'p'],
 	description: 'List current available pixies in-game',
 	usage: `${config.prefix}pixies [name] / ${config.prefix}pixies [class]`,
 	example: `${config.prefix}pixies madi / ${config.prefix}pixies support`,
