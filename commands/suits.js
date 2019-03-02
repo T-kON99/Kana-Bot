@@ -85,7 +85,7 @@ module.exports = {
 				}
 			}
 			else {
-				return message.channel.send(`Master ${message.author}, that suit does not exist!`);
+				return message.channel.send(`Master ${message.author}, that suit does not exist yet!`);
 			}
 		}
 		else {

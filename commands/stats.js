@@ -280,7 +280,10 @@ module.exports = {
 					message.channel.stopTyping();
 					let indexInt = 0;
 					let indexFloat = 0;
-					if(suit.statIntMin.length && suit.statFloat.length) {
+					if(!suit || !suit_2) {
+						return message.channel.send(`Master ${message.author}, that suit doesn't exist yet!`);
+					}
+					else if(suit.statIntMin.length && suit.statFloat.length) {
 						if(suit_2.statIntMin.length && suit_2.statFloat.length) {
 							for(const x in suit.statIntMin) {
 								if(suit.statIntMin[x].includes('N/A')) {
