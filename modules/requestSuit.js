@@ -61,7 +61,10 @@ module.exports = (client, args) => {
 					icon = $('#mw-content-text').find('img')[1].attribs.src;
 					//	Dynamic imageURL
 					for(let i = 0; i < $('#mw-content-text').find('img').length; i++) {
-						if($('#mw-content-text').find('img')[i].attribs.src.toLowerCase().includes(name.split(' ').join('_').toLowerCase())) suitURL.push($('#mw-content-text').find('img')[i].attribs.src);
+						const temp = $('#mw-content-text').find('img')[i].attribs.src.toLowerCase();
+						if(temp.includes(name.split(' ').join('_').toLowerCase()) || temp.includes(name.split(' ').join('').toLowerCase())) {
+							suitURL.push($('#mw-content-text').find('img')[i].attribs.src);
+						}
 					}
 					suitImageURL = suitURL[0];
 					suitURL = suitURL.filter(v => v.includes('icon'));
@@ -78,12 +81,14 @@ module.exports = (client, args) => {
 					icon = image[1].attribs.src;
 					//	Dynamic imageURL
 					for(let i = 0; i < $('#mw-content-text').find('img').length; i++) {
-						if($('#mw-content-text').find('img')[i].attribs.src.toLowerCase().includes(name.split(' ').join('_').toLowerCase())) {
+						const temp = $('#mw-content-text').find('img')[i].attribs.src.toLowerCase();
+						if(temp.includes(name.split(' ').join('_').toLowerCase()) || temp.includes(name.split(' ').join('').toLowerCase())) {
 							suitURL.push($('#mw-content-text').find('img')[i].attribs.src);
 						}
 					}
 					suitImageURL = suitURL[0];
 					suitURL = suitURL.filter(v => v.includes('icon'));
+					//	console.log(suitURL);
 					user = '-';
 				}
 				else {
@@ -196,7 +201,7 @@ module.exports = (client, args) => {
 			}
 		}
 		catch(err) {
-			console.log(err);
+			//	console.log(err);
 			console.log('Invalid Args');
 		}
 	});
